@@ -10,14 +10,26 @@ const getters={
 
 const actions={
     async fetchTodos({ commit }) {
-        const response = await axios.get('https://jsonplaceholder.typicode.com/users/1/todos');
+        const response = await axios.get('https://jsonplaceholder.typicode.com/todos');
         // console.log(response.data, commit);
         commit('setTodos', response.data)
+    },
+    async addTodo({commit}, title) {
+        const response = await axios.post('https://jsonplaceholder.typicode.com/todos', {title, completed: false});
+    
+        commit('newTodo', response.data);
+    },
+    async deleteTodo({commit}, id) {
+        await axios.delete(`https://jsonplaceholder.typicode.com/todos/${id}`);
+
+        commit('removeTodo', id);
     }
 };
 
 const mutations={
-    setTodos: (state, todos) => {state.todos = todos}
+    setTodos: (state, todos) => (state.todos = todos),
+    newTodo: (state, todo) => state.todos.unshift(todo),  // like push, but in the beginning...
+    removeTodo: (state, id) => state.todos = state.todos.filter(todo=> todo.id !== id)
 };
 
 export default {
